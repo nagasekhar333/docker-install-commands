@@ -1,0 +1,49 @@
+---
+- name: demo on vars and debug and tasks then var_prompt == what purpose to tasks          GOOGLE SEARCH ===  debug,var,tasks,registered,ignore
+  hosts: all  = host information                                                           
+  vars: = declare variable                                                          ln task Any changes are available after execution those time we use HANDLERS...
+    empid: 12345                                                                        
+    dep: IT
+  vars_prompt:
+    - name: name1
+      prompt: what is your name?
+      private: no
+    - name: age
+      prompt: what is your age?
+      private: no
+    - name: pkg1
+      prompt: what is your pkg to install?
+      private: no
+    - name: demon
+      prompt: what is the demon name to start the service?
+      private: no
+
+  tasks:
+    - name: print the info
+      ansible.builtin.debug:
+        msg: "emp name is {{ name1 }}  empid is {{ empid }} and department is {{ dep }}"   {{}} = variable in ansible,,,$$= variable in shell scripting  = output
+      vars:
+        name: manager 
+     - name: execute shell command                === what is registered value ==registered is the key word to get the value store into the variable,,,,var==variables
+       shell: df -h                               === registered means i can see output==fail or pass...
+       register: disk_util                        ===igonre= any error come out == execution fail
+       ignore_errors: yes                         
+       
+     - name: print disk utilization
+       debug:
+         var: disk_util.stdout_lines
+     - name: install ftp package
+       yum:
+        name: "{{ pkg1 }}"
+        state: latest
+       notify:                                   ====notify same to handler==any changes in task notify send to handlers..then execute==no changes not execute
+         - restart service
+    
+  handlers:
+     - name: restart service
+       service:
+         name: "{{ damon }}"
+         state: restarted
+        
+    
+        
